@@ -1,0 +1,36 @@
+version: '3.1'
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: postgres-golang-example
+    ports:
+      - '5430:5432'
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=golang-example
+    restart: always
+    networks:
+      - golang-net-example
+  apps:
+    build:
+      context: ./apps
+      dockerfile: Dockerfile
+    container_name: golang-example
+    restart: always
+    ports:
+      - '8090:8000'
+    networks:
+        - golang-net-example
+    environment:
+      DB_HOST: postgres-golang-example
+      DB_USER: postgres
+      DB_PORT: 5432
+      DB_PASSWORD: "postgres"
+      DB_NAME: "golang-example"
+      APP_PORT: "8000"
+networks:
+  golang-net-example:
+    external: true
