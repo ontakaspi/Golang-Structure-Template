@@ -335,7 +335,7 @@ type ExampleData struct {
 
 </details>
 
-``/app/core/request`` This package will store all request as struct data for validate data from API body request. 
+``/app/models/request`` This package will store all request as struct data for validate data from API body request. 
 We use package validator as validation library for handling data from request.
 <ul>
 <li>
@@ -390,7 +390,7 @@ func (std *CreateExampleData) BindRequestField(c *gin.Context) {
 
 </details>
 
-``/app/core/response`` This package will store all response as struct data for giving API body response.
+``/app/models/response`` This package will store all response as struct data for giving API body response.
 
 
 ----
