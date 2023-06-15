@@ -4,46 +4,45 @@ on:
   push:
     branches:
       - main
-
+        
 jobs:
   i3gis-job:
     runs-on: ubuntu-latest
     steps:
       - name: Scan project with i3gis
         run: |
-          echo "Scanning project dvsa with i3gis..."
+          echo "Scanning project new-project-cypress with i3gis..."
           scanResponse=$(curl --write-out '%{http_code}' --request POST -sL --url 'https://api-dev.i3gis.cloudeka.id/scan-svc/scan' --header 'Content-Type: application/json' --header 'Authorization: Bearer izbNtEdiyXT+Y7PXfuHDQJySEQncPeqcHaePg1NkHeMg6ZRqio9Fw8/f4UrGUm8fTUwyfsq7woPd/y82ocoNwslgpLop9Vm1TtxSWHFAcHyPheBTHY9ne4mIx59ep70S' --data '{"project_id":8}')
           scanCode=$(echo $scanResponse | grep -o ...$)
           echo "HTTP response status code: $scanCode"
-          if [ "$scanCode" = "200" ]; then
-            echo "Scan project dvsa with i3gis..."
+          if [ $scanCode = "200" ]; then
+            echo "Scan project new-project-cypress with i3gis..."
           else
             echo "Response: $scanResponse"
             echo "Build failed because scan was not successful..."
             exit 1
           fi
-          echo "Scan project dvsa with i3gis is starting..."
-      
+          echo "Scan project new-project-cypress with i3gis is starting..."
+
   i3gis-status-job:
     runs-on: ubuntu-latest
-    needs: i3gis-job
     steps:
-      - name: Wait for scan to finish
+      - name: Get scan status
         run: |
           echo "Get scan status..."
           status_running=true
           while [ "$status_running" = true ]; do
             sleep 5
             echo "Scan still running..."
-            checkResponse=$(curl --write-out '%{http_code}' --request GET -sL --url 'https://api-dev.i3gis.cloudeka.id/scan-svc/scan/8' --header 'Content-Type: application/json' --header 'Authorization: Bearer izbNtEdiyXT+Y7PXfuHDQJySEQncPeqcHaePg1NkHeMg6ZRqio9Fw8/f4UrGUm8fTUwyfsq7woPd/y82ocoNwslgpLop9Vm1TtxSWHFAcHyPheBTHY9ne4mIx59ep70S')
+            checkResponse=$(curl --write-out ''%{http_code}'' --request GET -sL --url 'https://api-dev.i3gis.cloudeka.id/scan-svc/scan/8' --header 'Content-Type: application/json' --header 'Authorization: Bearer izbNtEdiyXT+Y7PXfuHDQJySEQncPeqcHaePg1NkHeMg6ZRqio9Fw8/f4UrGUm8fTUwyfsq7woPd/y82ocoNwslgpLop9Vm1TtxSWHFAcHyPheBTHY9ne4mIx59ep70S')
             checkCode=$(echo $checkResponse | grep -o ...$)
             echo "HTTP response status code: $checkCode"
-            if [ "$checkCode" != "200" ] && [ "$checkCode" != "404" ]; then
+            if [ $checkCode != "200" ] && [ $checkCode != "404" ]; then
               echo "Response: $checkResponse"
               echo "Scan failed..."
               exit 1
             fi
-            if [ "$checkCode" = "404" ]; then
+            if [ $checkCode = "404" ]; then
               echo "Scan finished..."
               status_running=false
             fi
